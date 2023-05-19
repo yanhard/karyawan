@@ -23,6 +23,7 @@ import com.hrd.karyawan.dto.KaryawanTrainingDTO;
 import com.hrd.karyawan.dto.KaryawanTrainingUpdateDTO;
 import com.hrd.karyawan.services.KaryawanTrainingService;
 import com.hrd.karyawan.entities.KaryawanTraining;
+import com.hrd.karyawan.exception.CustomException;
 
 import jakarta.validation.Valid;
 
@@ -35,42 +36,63 @@ public class KaryawanTrainingController {
 
     @PostMapping("/karyawan-training/save")
     public ResponseEntity<?> saveKaryawanTraining(@Valid @RequestBody KaryawanTrainingDTO karyawanTrainingDTO) {
-        KaryawanTraining karyawanTraining = karyawanTrainingService.saveKaryawanTraining(karyawanTrainingDTO);
-        return ResponseEntity.ok(new ApiResponse<>(200, karyawanTraining));
-    }        
+        try {
+            KaryawanTraining karyawanTraining = karyawanTrainingService.saveKaryawanTraining(karyawanTrainingDTO);
+            return ResponseEntity.ok(new ApiResponse<>(200, karyawanTraining, "sukses"));
+        } catch (Exception e) {
+            throw new CustomException("Data tidak ditemukan");
+        }
+    }
 
     @PutMapping("/karyawan-training/update")
-    public ResponseEntity<?> updateKaryawanTraining(@Valid @RequestBody KaryawanTrainingUpdateDTO karyawanTrainingUpdateDTO) {
+    public ResponseEntity<?> updateKaryawanTraining(
+            @Valid @RequestBody KaryawanTrainingUpdateDTO karyawanTrainingUpdateDTO) {
+        try {
+
+        } catch (Exception e) {
+            throw new CustomException("Data tidak ditemukan");
+        }
         KaryawanTraining karyawanTraining = karyawanTrainingService.updateKaryawanTraining(karyawanTrainingUpdateDTO);
-        return ResponseEntity.ok(new ApiResponse<>(200, karyawanTraining));
+        return ResponseEntity.ok(new ApiResponse<>(200, karyawanTraining, "sukses"));
     }
 
     @GetMapping("/karyawan-training/list")
     public ResponseEntity<?> getKaryawanTrainingList(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-
-        Pageable pageable = PageRequest.of(page, size);
-        Page<KaryawanTraining> karyawanTrainingPage = karyawanTrainingService.getKaryawanTrainingList(pageable);
-
-        return ResponseEntity.ok(new ApiResponse<>(200, karyawanTrainingPage));
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<KaryawanTraining> karyawanTrainingPage = karyawanTrainingService.getKaryawanTrainingList(pageable);
+            return ResponseEntity.ok(new ApiResponse<>(200, karyawanTrainingPage, "sukses"));
+        } catch (Exception e) {
+            throw new CustomException("Data tidak ditemukan");
+        }
     }
 
     @GetMapping("/karyawan-training/{id}")
     public ResponseEntity<?> getKaryawanTrainingById(@PathVariable Long id) {
-        Optional<KaryawanTraining> karyawanTrainingOptional = karyawanTrainingService.getKaryawanTrainingById(id);
-        
-        if (karyawanTrainingOptional.isPresent()) {
-            return ResponseEntity.ok(new ApiResponse<>(200, karyawanTrainingOptional.get()));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(404, "KaryawanTraining not found with id: " + id));
+        try {
+            Optional<KaryawanTraining> karyawanTrainingOptional = karyawanTrainingService.getKaryawanTrainingById(id);
+
+            if (karyawanTrainingOptional.isPresent()) {
+                return ResponseEntity.ok(new ApiResponse<>(200, karyawanTrainingOptional.get(), "sukses"));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ApiResponse<>(404, "KaryawanTraining not found with id: " + id, "sukses"));
+            }
+        } catch (Exception e) {
+            throw new CustomException("Data tidak ditemukan");
         }
     }
 
     @DeleteMapping("/karyawan-training/delete")
     public ResponseEntity<?> deleteKaryawanTraining(@RequestBody Map<String, Long> request) {
-        Long id = request.get("id");
-        karyawanTrainingService.deleteKaryawanTrainingById(id);
-        return ResponseEntity.ok(new ApiResponse<>(200, "Sukses"));
+        try {
+            Long id = request.get("id");
+            karyawanTrainingService.deleteKaryawanTrainingById(id);
+            return ResponseEntity.ok(new ApiResponse<>(200, "Sukses", "sukses"));
+        } catch (Exception e) {
+            throw new CustomException("Data tidak ditemukan");
+        }
     }
 }

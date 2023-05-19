@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hrd.karyawan.dto.RekeningDTO;
 import com.hrd.karyawan.dto.RekeningDeleteDTO;
 import com.hrd.karyawan.entities.Rekening;
+import com.hrd.karyawan.exception.CustomException;
 import com.hrd.karyawan.services.RekeningService;
 
 @RestController
@@ -35,37 +36,57 @@ public class RekeningController {
 
     @PostMapping("/rekening/save")
     public ResponseEntity<?> saveRekening(@Valid @RequestBody RekeningDTO rekeningDTO) {
-        Rekening rekening = rekeningService.saveRekening(rekeningDTO);
-        return ResponseEntity.ok(new ApiResponse<>(200, rekening));
+        try {
+            Rekening rekening = rekeningService.saveRekening(rekeningDTO);
+            return ResponseEntity.ok(new ApiResponse<>(200, rekening, "sukses"));
+        } catch (Exception e) {
+            throw new CustomException("Data tidak ditemukan");
+        }
     }
 
     @PutMapping("/rekening/update")
     public ResponseEntity<?> updateRekening(@Valid @RequestBody RekeningDTO rekeningDTO) {
-    Assert.notNull(rekeningDTO.getKaryawan().getId(), "Rekening ID must not be null");
-    Rekening updatedRekening = rekeningService.updateRekening(rekeningDTO.getKaryawan().getId(), rekeningDTO);
-    return ResponseEntity.ok(new ApiResponse<>(200, updatedRekening));
+        try {
+            Assert.notNull(rekeningDTO.getId(), "Rekening ID must not be null");
+            Rekening updatedRekening = rekeningService.updateRekening(rekeningDTO);
+            return ResponseEntity.ok(new ApiResponse<>(200, updatedRekening, "sukses"));
+        } catch (Exception e) {
+            throw new CustomException("Data tidak ditemukan");
+        }
     }
 
     @GetMapping("/rekening/list")
     public ResponseEntity<?> listRekening(@RequestParam(defaultValue = "0") int page,
-                                      @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
-        Page<Rekening> rekeningPage = rekeningService.findAllRekening(pageable);
-        return ResponseEntity.ok(new ApiResponse<>(200, rekeningPage));     
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
+            Page<Rekening> rekeningPage = rekeningService.findAllRekening(pageable);
+            return ResponseEntity.ok(new ApiResponse<>(200, rekeningPage, "sukses"));
+        } catch (Exception e) {
+            throw new CustomException("Data tidak ditemukan");
+        }
     }
 
     @GetMapping("/rekening/{id}")
     public ResponseEntity<?> getRekeningById(@PathVariable Long id) {
-        Rekening rekening = rekeningService.findRekeningById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Rekening not found with id: " + id));
-        return ResponseEntity.ok(new ApiResponse<>(200, rekening));     
+        try {
+            Rekening rekening = rekeningService.findRekeningById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Rekening not found with id: " + id));
+            return ResponseEntity.ok(new ApiResponse<>(200, rekening, "sukses"));
+
+        } catch (Exception e) {
+            throw new CustomException("Data tidak ditemukan");
+        }
     }
 
     @DeleteMapping("/rekening/delete")
     public ResponseEntity<?> deleteRekeningById(@RequestBody RekeningDeleteDTO rekeningDeleteDTO) {
-        rekeningService.deleteRekeningById(rekeningDeleteDTO.getId());
-        return ResponseEntity.ok(new ApiResponse<>(200, "Sukses"));
+        try {
+            rekeningService.deleteRekeningById(rekeningDeleteDTO.getId());
+            return ResponseEntity.ok(new ApiResponse<>(200, "Sukses", "sukses"));
+        } catch (Exception e) {
+            throw new CustomException("Data tidak ditemukan");
+        }
     }
 
 }
-

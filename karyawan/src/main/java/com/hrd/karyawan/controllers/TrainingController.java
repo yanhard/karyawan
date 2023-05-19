@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hrd.karyawan.dto.TrainingDTO;
 import com.hrd.karyawan.entities.Training;
+import com.hrd.karyawan.exception.CustomException;
 import com.hrd.karyawan.services.TrainingService;
 
 import jakarta.validation.Valid;
@@ -33,14 +34,14 @@ public class TrainingController {
     @PostMapping("/training/save")
     public ResponseEntity<?> saveTraining(@Valid @RequestBody TrainingDTO trainingDTO) {
         Training training = trainingService.saveTraining(trainingDTO);
-        return ResponseEntity.ok(new ApiResponse<>(200, training));
+        return ResponseEntity.ok(new ApiResponse<>(200, training,"sukses"));
     }
     
     @PutMapping("/training/update")
     public ResponseEntity<?> updateTraining(@Valid @RequestBody TrainingDTO trainingDTO) {
         Long id = trainingDTO.getId();
         Training training = trainingService.updateTraining(id, trainingDTO);
-        return ResponseEntity.ok(new ApiResponse<>(200, training));
+        return ResponseEntity.ok(new ApiResponse<>(200, training,"sukses"));
     }
 
     @GetMapping("/training/list")
@@ -49,21 +50,25 @@ public class TrainingController {
         @RequestParam(name = "size", defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
         Page<Training> trainingPage = trainingService.getAllTrainings(pageable);
-        return ResponseEntity.ok(new ApiResponse<>(200, trainingPage));
+        return ResponseEntity.ok(new ApiResponse<>(200, trainingPage,"sukses"));
     }
 
     @GetMapping("/training/{id}")
     public ResponseEntity<?> getTrainingById(@PathVariable Long id) {
-        Training training = trainingService.getTrainingById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Training not found with id: " + id));
-        return ResponseEntity.ok(new ApiResponse<>(200, training));
+        try{
+            Training training = trainingService.getTrainingById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Training not found with id: " + id));
+            return ResponseEntity.ok(new ApiResponse<>(200, training,"sukses"));
+        }catch(Exception e){
+            throw new CustomException("Data tidak ditemukan");
+        }
     }
 
     @DeleteMapping("/training/delete")
     public ResponseEntity<?> deleteTrainingById(@RequestBody Map<String, Long> requestBody) {
         Long id = requestBody.get("id");
         trainingService.deleteTrainingById(id);
-        return ResponseEntity.ok(new ApiResponse<>(200, "Sukses"));
+        return ResponseEntity.ok(new ApiResponse<>(200, "Sukses","sukses"));
     }
 
 }
