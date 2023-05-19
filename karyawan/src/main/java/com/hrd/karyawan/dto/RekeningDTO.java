@@ -4,15 +4,17 @@ import lombok.Data;
 
 @Data
 public class RekeningDTO {
+    private Long id;
     private String nama;
     private String jenis;
     private String rekening;
     private String alamat;
-    //private Long karyawanId;
-    private KaryawanIdWrapper karyawan;
 
-    // Getters and setters
+    private KaryawanDTO karyawan;
 
+    //private KaryawanIdWrapper karyawan;
+
+    /*
     public static class KaryawanIdWrapper {
         private Long id;
 
@@ -24,5 +26,6 @@ public class RekeningDTO {
             this.id = id;
         }
     }    
+    */
 }
 
