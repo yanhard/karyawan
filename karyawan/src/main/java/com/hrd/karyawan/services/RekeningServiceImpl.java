@@ -42,23 +42,23 @@ public class RekeningServiceImpl implements RekeningService {
     }
 
     @Override
-    public Rekening updateRekening(Long id, RekeningDTO rekeningDTO) {
-    Rekening rekening = rekeningRepository.findById(id)
-    .orElseThrow(() -> new IllegalArgumentException("Rekening not found with id: " + id));
-
-    rekening.setNama(rekeningDTO.getNama());
-    rekening.setJenis(rekeningDTO.getJenis());
-    rekening.setRekening(rekeningDTO.getRekening());
-    rekening.setAlamat(rekeningDTO.getAlamat());
-
-    Assert.notNull(rekeningDTO.getKaryawan().getId(), "Karyawan ID must not be null");
-    Karyawan karyawan = karyawanRepository.findById(rekeningDTO.getKaryawan().getId())
-        .orElseThrow(() -> new IllegalArgumentException("Karyawan not found with id: " + rekeningDTO.getKaryawan().getId()));
-    rekening.setKaryawan(karyawan);
-
-    return rekeningRepository.save(rekening);
+    public Rekening updateRekening(RekeningDTO rekeningDTO) {
+        Rekening rekening = rekeningRepository.findById(rekeningDTO.getId())
+            .orElseThrow(() -> new IllegalArgumentException("Rekening is not found with id: " + rekeningDTO.getId()));
+    
+        rekening.setNama(rekeningDTO.getNama());
+        rekening.setJenis(rekeningDTO.getJenis());
+        rekening.setRekening(rekeningDTO.getRekening());
+        rekening.setAlamat(rekeningDTO.getAlamat());
+    
+        Assert.notNull(rekeningDTO.getKaryawan().getId(), "Karyawan ID must not be null");
+        Karyawan karyawan = karyawanRepository.findById(rekeningDTO.getKaryawan().getId())
+            .orElseThrow(() -> new IllegalArgumentException("Karyawan not found with id: " + rekeningDTO.getKaryawan().getId()));
+        rekening.setKaryawan(karyawan);
+    
+        return rekeningRepository.save(rekening);
     }
-
+    
     @Override
     public Page<Rekening> findAllRekening(Pageable pageable) {
         return rekeningRepository.findAll(pageable);

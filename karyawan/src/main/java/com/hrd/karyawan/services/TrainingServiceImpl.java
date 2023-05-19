@@ -29,9 +29,6 @@ public class TrainingServiceImpl implements TrainingService {
         Training training = trainingRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Training not found with id: " + id));
     
-        training.setCreatedDate(trainingDTO.getCreatedDate());
-        training.setDeletedDate(training.getDeletedDate());
-        training.setUpdatedDate(trainingDTO.getUpdatedDate());    
         training.setTema(trainingDTO.getTema());
         training.setPengajar(trainingDTO.getPengajar());
         return trainingRepository.save(training);        
