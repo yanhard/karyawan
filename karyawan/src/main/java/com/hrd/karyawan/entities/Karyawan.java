@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -19,7 +18,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
 import lombok.Data;
 
 @Data
@@ -29,16 +27,23 @@ public class Karyawan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @JsonIgnore
     private LocalDateTime createdDate;
+    @JsonIgnore
     private LocalDateTime deletedDate;
+    @JsonIgnore
     private LocalDateTime updatedDate;
+    @JsonIgnore
     private String alamat;
+    @JsonIgnore
     private LocalDate dob;
     private String nama;
+    @JsonIgnore
     private String status;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "detail_karyawan_id", referencedColumnName = "id")
+    @JsonIgnore
     private DetailKaryawan detailKaryawan;
 
     @PrePersist
@@ -54,10 +59,11 @@ public class Karyawan {
     }
 
     @OneToMany(mappedBy = "karyawan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    //@JsonManagedReference
     @JsonIgnore
-    private List<Rekening> rekeningList;    
+    private List<Rekening> rekeningList; 
 
+    //@OneToMany(mappedBy = "karyawan", fetch = FetchType.LAZY)
+    //private List<Training> trainingList;
 }
 
 

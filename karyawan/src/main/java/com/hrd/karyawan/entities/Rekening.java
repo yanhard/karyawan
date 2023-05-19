@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.hrd.karyawan.dto.KaryawanDTO;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,7 +37,7 @@ public class Rekening {
 
     @ManyToOne
     @JoinColumn(name = "id_karyawan", referencedColumnName = "id")
-    @JsonBackReference
+   // @JsonBackReference
     private Karyawan karyawan;
 
     @PrePersist
